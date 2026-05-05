@@ -45,8 +45,8 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = "server.app"
-WSGI_APPLICATION = "server.app"
+ASGI_APPLICATION = "bakery.asgi.application"
+WSGI_APPLICATION = "bakery.wsgi.application"
 
 # ---------------- Database ----------------
 # Local dev: SQLite (no extra setup). Railway: set DATABASE_URL → Postgres.
