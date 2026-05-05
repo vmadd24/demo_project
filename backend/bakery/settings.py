@@ -1,11 +1,24 @@
 import os
 from pathlib import Path
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-bakery-dev-key-change-me")
-DEBUG = True
-ALLOWED_HOSTS = ["*"]
+DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true"
+
+# Railway sets RAILWAY_PUBLIC_DOMAIN automatically; allow it + whatever the user configures.
+ALLOWED_HOSTS = ["*"] if DEBUG else [
+    h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()
+] or ["*"]
+
+# Railway uses HTTPS terminating proxy; trust it for CSRF and secure cookies.
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if o.strip()
+]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
@@ -17,6 +30,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
 ]
 
@@ -32,23 +46,33 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = "server.app"
+WSGI_APPLICATION = "server.app"
 
-# We do NOT use Django's ORM — data is in MongoDB via pymongo.
-# A dummy SQLite DB is configured only because Django requires `DATABASES`.
+# ---------------- Database ----------------
+# Local dev: SQLite (no extra setup). Railway: set DATABASE_URL → Postgres.
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ":memory:",
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=os.environ.get("DB_SSL", "false").lower() == "true",
+    )
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 USE_TZ = True
 TIME_ZONE = "UTC"
 
+# ---------------- Static (for whitenoise / future django admin) ----------------
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # ---------------- CORS ----------------
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-CORS_ALLOWED_ORIGINS = [FRONTEND_URL, "http://localhost:3000"]
+extra_origins = [
+    o.strip() for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if o.strip()
+]
+CORS_ALLOWED_ORIGINS = list({FRONTEND_URL, "http://localhost:3000", *extra_origins})
 CORS_ALLOW_CREDENTIALS = True
 
 # ---------------- DRF ----------------
@@ -59,10 +83,8 @@ REST_FRAMEWORK = {
     "UNAUTHENTICATED_TOKEN": None,
 }
 
-# ---------------- Custom bakery config ----------------
-MONGO_URL = os.environ["MONGO_URL"]
-MONGO_DB_NAME = os.environ["DB_NAME"]
-JWT_SECRET = os.environ["JWT_SECRET"]
+# ---------------- Bakery custom config ----------------
+JWT_SECRET = os.environ.get("JWT_SECRET", "dev-jwt-secret-change-me")
 JWT_ALGORITHM = "HS256"
-ADMIN_EMAIL = os.environ["ADMIN_EMAIL"]
-ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@bakery.com")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")

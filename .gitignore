@@ -7,3 +7,21 @@ credentials.json
 *.pem
 *.key
 .credentials
+
+# Backend
+**/__pycache__/
+*.pyc
+backend/db.sqlite3
+backend/staticfiles/
+
+# Frontend
+frontend/node_modules/
+frontend/build/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.log
+

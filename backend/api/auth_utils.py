@@ -5,7 +5,7 @@ from django.conf import settings
 from functools import wraps
 from rest_framework.response import Response
 
-from .db import users
+from .models import User
 
 
 def hash_password(password: str) -> str:
@@ -18,7 +18,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 def create_access_token(user_id: str, email: str) -> str:
     payload = {
-        "sub": user_id,
+        "sub": str(user_id),
         "email": email,
         "exp": datetime.now(timezone.utc) + timedelta(hours=12),
         "type": "access",
@@ -26,7 +26,7 @@ def create_access_token(user_id: str, email: str) -> str:
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
 
 
-def _extract_token(request) -> str | None:
+def _extract_token(request):
     token = request.COOKIES.get("access_token")
     if token:
         return token
@@ -37,7 +37,6 @@ def _extract_token(request) -> str | None:
 
 
 def get_current_admin(request):
-    """Returns user dict on success, Response on error (to be returned by view)."""
     token = _extract_token(request)
     if not token:
         return None, Response({"detail": "Not authenticated"}, status=401)
@@ -48,8 +47,12 @@ def get_current_admin(request):
     except jwt.InvalidTokenError:
         return None, Response({"detail": "Invalid token"}, status=401)
 
-    user = users.find_one({"id": payload["sub"]}, {"_id": 0, "password_hash": 0})
-    if not user or user.get("role") != "admin":
+    try:
+        user = User.objects.get(id=payload["sub"])
+    except User.DoesNotExist:
+        return None, Response({"detail": "Admin not found"}, status=401)
+
+    if user.role != "admin":
         return None, Response({"detail": "Admin not found"}, status=401)
     return user, None
 

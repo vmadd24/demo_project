@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bakery.settings")
+# Permit synchronous DB calls during ASGI startup (used by api.apps.ready() seed hook).
+os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
 
 import django  # noqa: E402
 
