@@ -1,0 +1,77 @@
+{
+  "theme": "light",
+  "archetype": "Organic & Earthy",
+  "design_context": "hybrid_fullstack (e-commerce storefront + admin dashboard)",
+  "color_palette": {
+    "background": "#F9F6F0",
+    "surface": "#FFFFFF",
+    "primary": "#C86B3C",
+    "primary_hover": "#A8532A",
+    "text_primary": "#3A2E2A",
+    "text_secondary": "#6B5A53",
+    "border": "#E8E2D9",
+    "accent": "#8A9A86"
+  },
+  "typography": {
+    "heading_font": "Playfair Display",
+    "body_font": "Manrope",
+    "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tighter font-serif font-black text-[#3A2E2A]",
+    "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-serif font-bold text-[#3A2E2A]",
+    "h3": "text-xl sm:text-2xl font-serif font-semibold text-[#3A2E2A]",
+    "body": "text-base font-sans font-normal text-[#6B5A53] leading-relaxed",
+    "label": "text-xs font-sans uppercase tracking-[0.2em] text-[#6B5A53]"
+  },
+  "spacing_and_layout": {
+    "generous_padding": "p-8 md:p-12 lg:p-16",
+    "bento_grid": "grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-8 lg:gap-12",
+    "dashboard_grid": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6",
+    "container_radius": "rounded-2xl"
+  },
+  "surfaces_and_micro_themes": {
+    "header": "backdrop-blur-xl bg-[#F9F6F0]/80 border-b border-[#E8E2D9] z-50",
+    "product_card": "bg-white rounded-2xl border border-[#E8E2D9] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-300",
+    "dashboard_card": "bg-white rounded-xl border border-[#E8E2D9] shadow-sm p-6"
+  },
+  "components": {
+    "button_primary": "bg-[#C86B3C] text-white hover:bg-[#A8532A] rounded-full px-8 py-3 font-medium transition-colors shadow-md",
+    "button_secondary": "bg-transparent text-[#3A2E2A] border border-[#3A2E2A] hover:bg-[#3A2E2A] hover:text-[#F9F6F0] rounded-full px-8 py-3 font-medium transition-colors"
+  },
+  "media": {
+    "hero_image": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/76d30b1d-406d-41e3-8062-be2acd104d8d/images/345e083bd24f52fe67d897db156ec6254e227acb1f02f2add2415f36346d8970.png",
+      "description": "Wide-angle photograph of a rustic artisanal bakery interior"
+    },
+    "product_images": [
+      {
+        "category": "Bread",
+        "url": "https://images.unsplash.com/photo-1768203628655-332397148938?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNzl8MHwxfHNlYXJjaHwyfHxhcnRpc2FuYWwlMjBicmVhZHxlbnwwfHx8fDE3NzgwMDA3NDZ8MA&ixlib=rb-4.1.0&q=85",
+        "description": "French baguettes and sliced bread"
+      },
+      {
+        "category": "Cake",
+        "url": "https://images.pexels.com/photos/29450335/pexels-photo-29450335.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Decorative cakes in a bakery display"
+      },
+      {
+        "category": "Pastry",
+        "url": "https://images.pexels.com/photos/15738015/pexels-photo-15738015.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Freshly baked croissant slice"
+      }
+    ]
+  },
+  "icons": {
+    "library": "lucide-react",
+    "style": "stroke-width: 1.5, color: #3A2E2A"
+  },
+  "testing": {
+    "data_testid_rule": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case."
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow the color palette. Do not use generic tailwind colors like blue-500 or gray-100; use custom hex codes defined here.",
+    "Use Playfair Display for all headings and Manrope for body text. Add `<link href='https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Playfair+Display:wght@400;600;700;900&display=swap' rel='stylesheet'>` to index.html.",
+    "For the storefront, build custom HTML/Tailwind structures with generous spacing and bento grids. Avoid wrapping everything in generic Shadcn cards.",
+    "For the admin dashboard, you may use Shadcn UI components but heavily customize their border radius and colors to match the earthy palette.",
+    "Add 'data-testid' to all buttons, links, inputs, and major sections.",
+    "Images MUST NOT exceed 80vh on mobile. Ensure all images use the exact URLs provided in this file, DO NOT use placeholder services."
+  ]
+}
